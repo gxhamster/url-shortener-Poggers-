@@ -1,0 +1,25 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "A Url Shortner for my need ",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "repository": "git@github.com:gxhamster/url-shortener-Poggers-.git",
+  "author": "Iyaan Azeez <iyaanazeez757@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.1.0",
+    "monk": "^7.3.2",
+    "morgan": "^1.10.0",
+    "nanoid": "^3.1.12"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
