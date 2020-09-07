@@ -27,8 +27,23 @@ const schema = yup.object().shape({
     url: yup.string().trim().url().required()
 })
 
-// console.log(process.env.NODE_VERSION)
+// Go to url in database
+app.get('/:id', async (req, res, next) => {
+    const {id: slug} = req.params
+    try {
+        const url = await urls.findOne({ slug })
+        if (url) {
+            return res.redirect(url.url)
+        } else {
+            console.log('Cannot find that slug Oops 🧀')
+        }
 
+    } catch {
+
+    }
+})
+
+// Make a new slug
 app.post('/url', async (req, res, next) => {
     let { slug, url } = req.body
     
@@ -59,6 +74,32 @@ app.post('/url', async (req, res, next) => {
     } catch (error) {
         next(error)
     }
+})
+
+// Delete a slug
+app.delete('/url', async (req, res, next) => {
+    let { slug, url } = req.body
+    try {
+        const exist = await urls.findOne({ slug })
+        console.log(exist)
+        if (exist) {
+            await urls.remove({
+                slug: slug,
+                url: url
+            })
+
+            return res.json({
+                message: `${slug} has been deleted 🍚`
+            })
+        } else {
+            return res.json({
+                message: `Cannot find ${slug} 🍘`
+            })
+        }
+    } catch (error) {
+        
+    }
+
 })
 
 const port = process.env.PORT || 2300
