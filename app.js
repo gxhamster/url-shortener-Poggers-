@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const { nanoid } = require('nanoid')
 const monk = require('monk')
 const yup = require('yup')
+const path = require('path')
 
 require('dotenv').config()
 
@@ -27,6 +28,8 @@ const schema = yup.object().shape({
     url: yup.string().trim().url().required()
 })
 
+const notFoundPath = path.join(__dirname, './public/notFound.html')
+
 // Go to url in database
 app.get('/:id', async (req, res, next) => {
     const {id: slug} = req.params
@@ -34,12 +37,12 @@ app.get('/:id', async (req, res, next) => {
         const url = await urls.findOne({ slug })
         if (url) {
             return res.redirect(url.url)
-        } else {
-            console.log('Cannot find that slug Oops 🧀')
-        }
+        } 
+
+        return res.status(404).sendFile(notFoundPath)
 
     } catch {
-
+        return res.status(404).sendFile(notFoundPath)
     }
 })
 
@@ -97,9 +100,25 @@ app.delete('/url', async (req, res, next) => {
             })
         }
     } catch (error) {
-        
+        next(error)
     }
 
+})
+
+app.use((req, res, next) => {
+    res.status(404).sendFile(notFoundPath)
+})
+
+app.use((error, req, res, next) => {
+    if (error.status) {
+        res.status(error.status)
+    } else {
+        res.status(500)
+    }
+    res.json({
+        message: error.message,
+        stack: error.stack
+    })
 })
 
 const port = process.env.PORT || 2300
